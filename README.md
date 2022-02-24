@@ -1,2 +1,2 @@
 # Knapsack
-Am implementation of tthe Knapsack Encryption System.
+Am implementation of the Knapsack Encryption System.
