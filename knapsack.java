@@ -3,8 +3,7 @@ import java.util.Random;
 
 public class knapsack {
 	public static void main(String[] args) {
-		BigInteger[] array = privateSequence(5,100);
-		printArray(array);
+		
 	}
 
 	/** This method returns a superincreasing sequence with a given length, where
