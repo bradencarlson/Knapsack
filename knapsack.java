@@ -6,6 +6,14 @@ public class knapsack {
 		BigInteger[] array = privateSequence(5,100);
 		printArray(array);
 	}
+
+	/** This method returns a superincreasing sequence with a given length, where
+	*		the first number has at most a given number of bits.
+	*		@param length The number of terms to be in the sequence
+	*		@param start_length The maximum number of bits for the first number in the
+	*		sequence
+	*		@return The superincreasing sequence
+	*/
 	public static BigInteger[] privateSequence(int length, int start_length) {
 		BigInteger[] sequence = new BigInteger[length];
 		Random r = new Random();
