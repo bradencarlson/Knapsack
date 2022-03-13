@@ -27,6 +27,7 @@ public class knapsack {
 		for(int i = 1; i< length; i++) {
 			BigInteger next = sum;
 			BigInteger multiplier = new BigInteger(Integer.toString(r.nextInt(100000+i)));
+			multiplier = multiplier.add(new BigInteger(Integer.toString(r.nextInt(10000000))));
 			next = next.multiply(multiplier);
 			sum = sum.add(next);
 			sequence[i] = next;
