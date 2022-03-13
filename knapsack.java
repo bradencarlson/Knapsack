@@ -38,7 +38,8 @@ public class knapsack {
 	*   the public sequence, then for each byte in the message, computes each
 	*   bit in the byte, then adds the corresponding number in the public sequence
 	*   to the encrypted message.  Note that this method requires that the length
-	*   of the publicSequence must be an integer multiple of 8.
+	*   of the publicSequence must be an integer multiple of 8.  This will probably
+	*   eventualy be fixed.
 	*   @param message the message to be encrypted
 	*   @param publicSequence The public sequence to be used for encryption
 	*   @return The number that corresponds to the encrypted block
