@@ -2,31 +2,55 @@ import java.math.BigInteger;
 import java.util.Random;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class knapsack {
 	public static void main(String[] args) {
-		
+		byte[][] message = split("message.txt",5);
+		printDoubleArray(message);
+		try {
+			FileOutputStream out = new FileOutputStream("output.txt");
+			for(int i = 0; i< message.length; i++) {
+				out.write(message[i]);
+			}
+			out.close();
+		} catch(IOException e) {
+			System.err.println(e.getMessage());
+		}
 	}
 
+	/** This method takes in the name of a file, as well as a length.
+	*   This effectively splits up the message into blocks of bytes of
+	*   the length provided.  This length should not be the length of the
+	*   private sequence, but rather, (1/8)*(length of private sequence),
+	*   since each byte will take up eight digits of the sequence.
+	*   @param filename the name of the file where the message is
+	*   being stored
+	*   @param sequence_length the length of the blocks
+	*   @return a double byte array containing the blocks of the message.
+	*/
 	public static byte[][] split(String filename, int sequence_length) {
 		ArrayList<byte[]> list  = new ArrayList<>();
 		try {
 			FileInputStream fs = new FileInputStream(filename);
+			byte[] block = new byte[sequence_length];
+			int count = 0;
+			do {
+				count = fs.read(block);
+				list.add(block);
+				block = new byte[sequence_length];
+			} while(count!=-1);
 
-		} catch(FileNotFoundException f) {
-			System.err.println(f.getMessage());
+
+		} catch(IOException e) {
+			System.err.println(e.getMessage());
 		}
 
-		byte[] block = new byte[sequence_length];
-		int count = 0;
-		do {
-			int a = fs.read(block);
-			list.add(block);
-		} while(a!=-1);
 
-		byte[][] message = byte[list.size()][sequence_length];
+		byte[][] message = new byte[list.size()][sequence_length];
 		for(int i = 0; i< list.size(); i++) {
 			message[i] = list.get(i);
 		}
@@ -110,19 +134,32 @@ public class knapsack {
 		}
 		return encryptedMessage;
 	}
-	
+
 	public static BigInteger[] publicSequence(BigInteger[] privateSequence, BigInteger modulus, BigInteger multiplier) {
 		BigInteger[] publicSequence = new BigInteger[privateSequence.length];
 		for (int i = 0; i < publicSequence.length; i++) {
 			publicSequence[i] = (privateSequence[i].multiply(multiplier)).mod(modulus);
 		}
-		
+
 		return publicSequence;
 	}
+
+
+	//  for testing only 
 
 	public static void printArray(BigInteger[] array) {
 		for(int i = 0; i< array.length; i++) {
 			System.out.println(array[i]);
 		}
 	}
+	public static void printDoubleArray(byte[][] array) {
+		for(int i = 0; i< array.length; i++) {
+			for(int j = 0; j<array[i].length; j++) {
+				System.out.println(array[i][j]+" ");
+			}
+			System.out.println();
+		}
+		System.out.println();
+	}
+
 }
