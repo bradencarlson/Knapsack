@@ -8,6 +8,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class knapsack {
+
+	/** main method to test and utilize all methods defined in this
+	*   document.
+	*   @param args arguments.
+	*/
 	public static void main(String[] args) {
 		byte[][] message = split("message.txt",5);
 		printDoubleArray(message);
@@ -135,6 +140,15 @@ public class knapsack {
 		return encryptedMessage;
 	}
 
+	/** Takes a private sequence and uses the given multiplier and modulus
+	*   to convert it into a public sequence, if the multiplier is chosen well,
+	*   then this will hide the details of the private sequence, so the
+	*   encrypted message created with this public sequence is secure.
+	*   @param privateSequence The private sequence to be kept secret
+	*   @param modulus The modulus
+	*   @param multiplier The multiplier to use.
+	*   @return The public sequence to be published.
+	*/
 	public static BigInteger[] publicSequence(BigInteger[] privateSequence, BigInteger modulus, BigInteger multiplier) {
 		BigInteger[] publicSequence = new BigInteger[privateSequence.length];
 		for (int i = 0; i < publicSequence.length; i++) {
@@ -145,17 +159,23 @@ public class knapsack {
 	}
 
 
-	//  for testing only 
 
+	/** Prints out a BigInteger array.
+	*   @param array The array to be printed.
+	*/
 	public static void printArray(BigInteger[] array) {
 		for(int i = 0; i< array.length; i++) {
 			System.out.println(array[i]);
 		}
 	}
+
+	/** prints out a double byte array.
+	*   @param array The array to be printed.
+	*/
 	public static void printDoubleArray(byte[][] array) {
 		for(int i = 0; i< array.length; i++) {
 			for(int j = 0; j<array[i].length; j++) {
-				System.out.println(array[i][j]+" ");
+				System.out.print(array[i][j]+" ");
 			}
 			System.out.println();
 		}
