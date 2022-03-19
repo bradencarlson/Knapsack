@@ -1,14 +1,37 @@
 import java.math.BigInteger;
 import java.util.Random;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
 
 public class knapsack {
 	public static void main(String[] args) {
-		BigInteger[] sequence = privateSequence(16,4);
-		printArray(sequence);
-		byte[] message = new byte[2];
-		message[0] = 0x02;
-		message[1] = 0x02;
-		System.out.println(encrypt(message,sequence));
+		
+	}
+
+	public static byte[][] split(String filename, int sequence_length) {
+		ArrayList<byte[]> list  = new ArrayList<>();
+		try {
+			FileInputStream fs = new FileInputStream(filename);
+
+		} catch(FileNotFoundException f) {
+			System.err.println(f.getMessage());
+		}
+
+		byte[] block = new byte[sequence_length];
+		int count = 0;
+		do {
+			int a = fs.read(block);
+			list.add(block);
+		} while(a!=-1);
+
+		byte[][] message = byte[list.size()][sequence_length];
+		for(int i = 0; i< list.size(); i++) {
+			message[i] = list.get(i);
+		}
+
+		return message;
 	}
 
 	/** This method returns a superincreasing sequence with a given length, where
