@@ -87,6 +87,15 @@ public class knapsack {
 		}
 		return encryptedMessage;
 	}
+	
+	public static BigInteger[] publicSequence(BigInteger[] privateSequence, BigInteger modulus, BigInteger multiplier) {
+		BigInteger[] publicSequence = new BigInteger[privateSequence.length];
+		for (int i = 0; i < publicSequence.length; i++) {
+			publicSequence[i] = (privateSequence[i].multiply(multiplier)).mod(modulus);
+		}
+		
+		return publicSequence;
+	}
 
 	public static void printArray(BigInteger[] array) {
 		for(int i = 0; i< array.length; i++) {
