@@ -43,11 +43,10 @@ public class knapsack {
 			FileInputStream fs = new FileInputStream(filename);
 			byte[] block = new byte[sequence_length];
 			int count = 0;
-			do {
-				count = fs.read(block);
+			while(fs.read(block)!=-1) {
 				list.add(block);
 				block = new byte[sequence_length];
-			} while(count!=-1);
+			}
 
 
 		} catch(IOException e) {
@@ -64,13 +63,19 @@ public class knapsack {
 	}
 
 	/** This method returns a superincreasing sequence with a given length, where
-	*   the first number has at most a given number of bits.
+	*   the first number has at most a given number of bits.  This method first
+	*   checks to ensure that the length of the sequence is a multiple of 8, so
+  *   that it works with the encrypt method.
 	*   @param length The number of terms to be in the sequence
 	*   @param start_length The maximum number of bits for the first number in the
 	*   sequence
 	*   @return The superincreasing sequence
 	*/
 	public static BigInteger[] privateSequence(int length, int start_length) {
+		if (length%8 != 0) {
+			length += (8-length%8);
+		}
+
 		BigInteger[] sequence = new BigInteger[length];
 		Random r = new Random();
 		BigInteger start = new BigInteger(start_length,r);
@@ -91,8 +96,8 @@ public class knapsack {
 	*   the public sequence, then for each byte in the message, computes each
 	*   bit in the byte, then adds the corresponding number in the public sequence
 	*   to the encrypted message.  Note that this method requires that the length
-	*   of the publicSequence must be an integer multiple of 8.  This will probably
-	*   eventualy be fixed.
+	*   of the publicSequence must be an integer multiple of 8.  Which is
+	*   guaranteed by the privateSequence method.
 	*   @param message the message to be encrypted
 	*   @param publicSequence The public sequence to be used for encryption
 	*   @return The number that corresponds to the encrypted block
