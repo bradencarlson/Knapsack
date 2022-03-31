@@ -25,7 +25,7 @@ public class knapsack {
 		BigInteger inverse = new BigInteger("997");
 
 		byte[][] message = split("message.txt",1);
-		//printDoubleArray(message);
+
 
 		BigInteger[] publicS = new BigInteger[privateS.length];
 		publicS = publicSequence(privateS, modulus, multiplier);
@@ -52,7 +52,9 @@ public class knapsack {
 			decrypted[i] = decrypt(encrypted[i],privateS, inverse,modulus);
 		}
 		System.out.println();
-		//printDoubleArray(decrypted);
+
+		printDoubleArray(message);
+		printDoubleArray(decrypted);
 
 		System.out.println("First block decreypted:");
 		System.out.println(decrypted[0][0]);
@@ -300,6 +302,13 @@ public class knapsack {
 	public static void printArray(BigInteger[] array) {
 		for(int i = 0; i< array.length; i++) {
 			System.out.print(array[i]+" ");
+		}
+		System.out.println();
+	}
+
+	public static void printAsTable(byte[] array1, int[] array2) {
+		for(int i = 0; i< array1.length; i++) {
+			System.out.println(array1[i]+"\t"+array2[i]);
 		}
 		System.out.println();
 	}
