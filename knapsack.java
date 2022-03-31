@@ -25,28 +25,44 @@ public class knapsack {
 		BigInteger inverse = new BigInteger("997");
 
 		byte[][] message = split("message.txt",1);
-		printDoubleArray(message);
+		//printDoubleArray(message);
 
 		BigInteger[] publicS = new BigInteger[privateS.length];
-		publicS = publicSequence(privateS, modulus,multiplier);
+		publicS = publicSequence(privateS, modulus, multiplier);
+
+		System.out.println("public sequence");
+		printArray(publicS);
+		System.out.println();
+		System.out.println("First block of message:");
+		printArray(message[0]);
 
 		BigInteger[] encrypted = new BigInteger[message.length];
+
+
 
 		for(int i = 0; i< message.length; i++) {
 			encrypted[i] = encrypt(message[i],publicS);
 		}
 
-		byte[][] decrypted = new byte[message.length][];
+		System.out.println("First block encrypted:");
+		System.out.println(encrypted[0]);
+
+		int[][] decrypted = new int[message.length][];
 		for(int i = 0; i< encrypted.length; i++) {
 			decrypted[i] = decrypt(encrypted[i],privateS, inverse,modulus);
 		}
 		System.out.println();
-		printDoubleArray(decrypted);
+		//printDoubleArray(decrypted);
+
+		System.out.println("First block decreypted:");
+		System.out.println(decrypted[0][0]);
 
 		try {
 			FileOutputStream fw = new FileOutputStream("output.txt");
 			for(int i = 0; i< decrypted.length; i++) {
-				fw.write(decrypted[i]);
+				for(int j = 0; j<decrypted[i].length; j++) {
+					fw.write(decrypted[i][j]);
+				}
 			}
 			fw.close();
 		} catch (Exception e) {
@@ -54,7 +70,6 @@ public class knapsack {
 		}
 
 
-		System.out.println((0b01 << 3) | 0b01 );
 
 	}
 
@@ -143,7 +158,7 @@ public class knapsack {
 		int sixtyfour = 0x40;
 		int onetwentyeight = 0x80; // eighth bit.
 
-		int count = 0;
+		int count = publicSequence.length-1;
 		BigInteger encryptedMessage = new BigInteger("0");
 
 		for(int i = 0; i< message.length; i++) {
@@ -156,23 +171,36 @@ public class knapsack {
 			int x7 = (message[i] & sixtyfour)/64;
 			int x8 = (message[i] & onetwentyeight)/128;
 
-			encryptedMessage = encryptedMessage.add(publicSequence[count++].multiply(
+			System.out.println("bits in encrypted method:");
+			System.out.println(x1);
+			System.out.println(x2);
+			System.out.println(x3);
+			System.out.println(x4);
+			System.out.println(x5);
+			System.out.println(x6);
+			System.out.println(x7);
+			System.out.println(x8);
+
+
+			encryptedMessage = encryptedMessage.add(publicSequence[count--].multiply(
 				new BigInteger(Integer.toString(x1))));
-			encryptedMessage = encryptedMessage.add(publicSequence[count++].multiply(
+			encryptedMessage = encryptedMessage.add(publicSequence[count--].multiply(
 				new BigInteger(Integer.toString(x2))));
-			encryptedMessage = encryptedMessage.add(publicSequence[count++].multiply(
+			encryptedMessage = encryptedMessage.add(publicSequence[count--].multiply(
 				new BigInteger(Integer.toString(x3))));
-			encryptedMessage = encryptedMessage.add(publicSequence[count++].multiply(
+			encryptedMessage = encryptedMessage.add(publicSequence[count--].multiply(
 				new BigInteger(Integer.toString(x4))));
-			encryptedMessage = encryptedMessage.add(publicSequence[count++].multiply(
+			encryptedMessage = encryptedMessage.add(publicSequence[count--].multiply(
 				new BigInteger(Integer.toString(x5))));
-			encryptedMessage = encryptedMessage.add(publicSequence[count++].multiply(
+			encryptedMessage = encryptedMessage.add(publicSequence[count--].multiply(
 				new BigInteger(Integer.toString(x6))));
-			encryptedMessage = encryptedMessage.add(publicSequence[count++].multiply(
+			encryptedMessage = encryptedMessage.add(publicSequence[count--].multiply(
 				new BigInteger(Integer.toString(x7))));
-			encryptedMessage = encryptedMessage.add(publicSequence[count++].multiply(
+			encryptedMessage = encryptedMessage.add(publicSequence[count--].multiply(
 				new BigInteger(Integer.toString(x8))));
 		}
+		System.out.print("Encrypted block: ");
+		System.out.println(encryptedMessage);
 		return encryptedMessage;
 	}
 
@@ -185,14 +213,14 @@ public class knapsack {
 	*   @param privateSequence The private sequence
 	*   @return a byte array containing the original message
 	*/
-	public static byte[] decrypt(BigInteger message, BigInteger[] privateSequence,
+	public static int[] decrypt(BigInteger message, BigInteger[] privateSequence,
 		BigInteger multiplier, BigInteger modulus) {
-			message = message.multiply(multiplier).mod(modulus);
+			message = (message.multiply(multiplier)).mod(modulus);
 
 			int position = privateSequence.length-1;
 			boolean[] bits = new boolean[8];
 
-			byte[] decrypted = new byte[privateSequence.length/8];
+			int[] decrypted = new int[privateSequence.length/8];
 			int count = 0;
 
 			while (message.compareTo(BigInteger.ZERO)>0) {
@@ -208,7 +236,7 @@ public class knapsack {
 						position--;
 					}
 				}
-				byte myByte = toByte(bits);
+				int myByte = toByte(bits);
 				//System.out.println(myByte);
 				decrypted[count++] = myByte;
 			}
@@ -216,7 +244,7 @@ public class knapsack {
 			return decrypted;
 	}
 
-	public static byte toByte(boolean[] array) throws IllegalArgumentException {
+	public static int toByte(boolean[] array) throws IllegalArgumentException {
 		if (array.length==8) {
 			int[] bits = new int[8];
 
@@ -234,12 +262,12 @@ public class knapsack {
 
 			for(int i = 0; i< 8; i++) {
 				if(array[i]) {
-					//newByte = newByte | bits[i];
-					test = (test | 0b01) >> 1;
+					newByte = newByte | bits[i];
+
 				}
 			}
 
-			return (byte) newByte;
+			return newByte;
 		}
 		else {
 			throw new IllegalArgumentException("To create a new byte, an array length\nof 8 is required.");
@@ -271,14 +299,32 @@ public class knapsack {
 	*/
 	public static void printArray(BigInteger[] array) {
 		for(int i = 0; i< array.length; i++) {
-			System.out.println(array[i]);
+			System.out.print(array[i]+" ");
 		}
+		System.out.println();
+	}
+
+	public static void printArray(byte[] array) {
+		for(int i = 0; i< array.length; i++) {
+			System.out.print(array[i]+" ");
+		}
+		System.out.println();
 	}
 
 	/** prints out a double byte array.
 	*   @param array The array to be printed.
 	*/
 	public static void printDoubleArray(byte[][] array) {
+		for(int i = 0; i< array.length; i++) {
+			for(int j = 0; j<array[i].length; j++) {
+				System.out.print(array[i][j]+" ");
+			}
+			System.out.println();
+		}
+		System.out.println();
+	}
+
+	public static void printDoubleArray(int[][] array) {
 		for(int i = 0; i< array.length; i++) {
 			for(int j = 0; j<array[i].length; j++) {
 				System.out.print(array[i][j]+" ");
