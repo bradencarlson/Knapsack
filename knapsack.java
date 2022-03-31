@@ -72,6 +72,16 @@ public class knapsack {
 		}
 
 
+		/*boolean[] array = new boolean[8];
+		array[0]=true;
+		array[1] = false;
+		array[2] = true;
+		array[3] = true;
+		array[4] = false;
+		array[5] = true;
+		array[6] = true;
+		array[7] = false;
+		System.out.println(toByte(array));*/
 
 	}
 
@@ -228,18 +238,20 @@ public class knapsack {
 			while (message.compareTo(BigInteger.ZERO)>0) {
 				for(int i = 0; i< 8; i++) {
 					//System.out.println(position);
-					//System.out.println("Comparing: "+message + " to "+privateSequence[position]);
+					System.out.println("Comparing: "+message + " to "+privateSequence[position]);
 					if (message.compareTo(privateSequence[position])>=0) {
 						bits[i] = true;
 						message = message.subtract(privateSequence[position]);
 						position--;
 					} else {
-						bits[0] = false;
+						bits[i] = false;
 						position--;
 					}
+					System.out.println(bits[i]);
 				}
 				int myByte = toByte(bits);
-				//System.out.println(myByte);
+				System.out.print("decrypt method ");
+				System.out.println(myByte);
 				decrypted[count++] = myByte;
 			}
 
