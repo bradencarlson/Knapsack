@@ -157,15 +157,6 @@ public class knapsack {
 	*   @return a byte array containing the original message
 	*/
 	public static Byte[] decrypt(BigInteger message, BigInteger[] privateSequence) {
-		int one = 0x01;	// first bit
-		int two = 0x02; // second bit
-		int four = 0x04; // ...
-		int eight = 0x08;
-		int sixteen = 0x10;
-		int thirtytwo = 0x20;
-		int sixtyfour = 0x40;
-		int onetwentyeight = 0x80; // eighth bit.
-
 		int position = privateSequence.length-1;
 		boolean[] bits = new boolean[8];
 
@@ -191,13 +182,13 @@ public class knapsack {
 		if (array.length==8) {
 			int[] bits = new int[8];
 
-			bits[0] =	0b00000001;
+			bits[0] = 0b00000001;
 			bits[1] = 0b00000010;
 			bits[2] = 0b00000100;
 			bits[3] = 0b00001000;
 			bits[4] = 0b00010000;
 			bits[5] = 0b00100000;
-			bits[6] =	0b01000000;
+			bits[6] = 0b01000000;
 			bits[7] = 0b10000000;
 
 			byte newByte = 0x00;
