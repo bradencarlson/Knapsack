@@ -16,17 +16,46 @@ public class knapsack {
 	*   @param args arguments.
 	*/
 	public static void main(String[] args) {
-		byte[][] message = split("message.txt",5);
+		BigInteger[] privateS = {new BigInteger("2"),new BigInteger("4"),
+		new BigInteger("8"),new BigInteger("16"),new BigInteger("32"),
+		new BigInteger("64"), new BigInteger("128"), new BigInteger("256")};
+
+		BigInteger modulus = new BigInteger("1000");
+		BigInteger multiplier = new BigInteger("333");
+		BigInteger inverse = new BigInteger("997");
+
+		byte[][] message = split("message.txt",1);
 		printDoubleArray(message);
+
+		BigInteger[] publicS = new BigInteger[privateS.length];
+		publicS = publicSequence(privateS, modulus,multiplier);
+
+		BigInteger[] encrypted = new BigInteger[message.length];
+
+		for(int i = 0; i< message.length; i++) {
+			encrypted[i] = encrypt(message[i],publicS);
+		}
+
+		byte[][] decrypted = new byte[message.length][];
+		for(int i = 0; i< encrypted.length; i++) {
+			decrypted[i] = decrypt(encrypted[i],privateS, inverse,modulus);
+		}
+		System.out.println();
+		printDoubleArray(decrypted);
+
 		try {
-			FileOutputStream out = new FileOutputStream("output.txt");
-			for(int i = 0; i< message.length; i++) {
-				out.write(message[i]);
+			FileOutputStream fw = new FileOutputStream("output.txt");
+			for(int i = 0; i< decrypted.length; i++) {
+				fw.write(decrypted[i]);
 			}
-			out.close();
-		} catch(IOException e) {
+			fw.close();
+		} catch (Exception e) {
 			System.err.println(e.getMessage());
 		}
+
+
+		System.out.println((0b01 << 3) | 0b01 );
+
 	}
 
 	/** This method takes in the name of a file, as well as a length.
@@ -156,26 +185,35 @@ public class knapsack {
 	*   @param privateSequence The private sequence
 	*   @return a byte array containing the original message
 	*/
-	public static Byte[] decrypt(BigInteger message, BigInteger[] privateSequence) {
-		int position = privateSequence.length-1;
-		boolean[] bits = new boolean[8];
+	public static byte[] decrypt(BigInteger message, BigInteger[] privateSequence,
+		BigInteger multiplier, BigInteger modulus) {
+			message = message.multiply(multiplier).mod(modulus);
 
-		byte[] decrypted = new byte[privateSequence/8];
-		int count = 0;
+			int position = privateSequence.length-1;
+			boolean[] bits = new boolean[8];
 
-		while (message.compareTo(BigInteger.ZERO)>0) {
-			for(int i = 0; i< 8; i++) {
-				if (message.compareTo(privateSequence[position--])>0) {
-					bits[i] = true;
-				} else {
-					bits[0] = false;
+			byte[] decrypted = new byte[privateSequence.length/8];
+			int count = 0;
+
+			while (message.compareTo(BigInteger.ZERO)>0) {
+				for(int i = 0; i< 8; i++) {
+					//System.out.println(position);
+					//System.out.println("Comparing: "+message + " to "+privateSequence[position]);
+					if (message.compareTo(privateSequence[position])>=0) {
+						bits[i] = true;
+						message = message.subtract(privateSequence[position]);
+						position--;
+					} else {
+						bits[0] = false;
+						position--;
+					}
 				}
+				byte myByte = toByte(bits);
+				//System.out.println(myByte);
+				decrypted[count++] = myByte;
 			}
-			byte myByte = toByte(bits);
-			decrypted[count++] = myByte;
-		}
 
-		return decrypted;
+			return decrypted;
 	}
 
 	public static byte toByte(boolean[] array) throws IllegalArgumentException {
@@ -191,14 +229,17 @@ public class knapsack {
 			bits[6] = 0b01000000;
 			bits[7] = 0b10000000;
 
-			byte newByte = 0x00;
+			int newByte = 0x00;
+			byte test = 0b00000000;
 
 			for(int i = 0; i< 8; i++) {
 				if(array[i]) {
-					newByte = newByte & bits[i];
+					//newByte = newByte | bits[i];
+					test = (test | 0b01) >> 1;
 				}
 			}
-			return newByte;
+
+			return (byte) newByte;
 		}
 		else {
 			throw new IllegalArgumentException("To create a new byte, an array length\nof 8 is required.");
