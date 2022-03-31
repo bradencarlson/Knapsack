@@ -101,7 +101,7 @@ public class knapsack {
 	/** This method returns a superincreasing sequence with a given length, where
 	*   the first number has at most a given number of bits.  This method first
 	*   checks to ensure that the length of the sequence is a multiple of 8, so
-  *   that it works with the encrypt method.
+	*   that it works with the encrypt method.
 	*   @param length The number of terms to be in the sequence
 	*   @param start_length The maximum number of bits for the first number in the
 	*   sequence
