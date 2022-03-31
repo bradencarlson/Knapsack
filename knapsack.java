@@ -24,41 +24,31 @@ public class knapsack {
 		BigInteger multiplier = new BigInteger("333");
 		BigInteger inverse = new BigInteger("997");
 
+		// split the message up into blocks of appropriate size
 		byte[][] message = split("message.txt",1);
 
-
+		// create the public sequence based on the parameters above
 		BigInteger[] publicS = new BigInteger[privateS.length];
 		publicS = publicSequence(privateS, modulus, multiplier);
 
-		System.out.println("public sequence");
-		printArray(publicS);
-		System.out.println();
-		System.out.println("First block of message:");
-		printArray(message[0]);
-
+		// create the encrypted array
 		BigInteger[] encrypted = new BigInteger[message.length];
 
-
-
+		// go through the message, and encrypt each block
+		// this can be parallelized eventually
 		for(int i = 0; i< message.length; i++) {
 			encrypted[i] = encrypt(message[i],publicS);
 		}
 
-		System.out.println("First block encrypted:");
-		System.out.println(encrypted[0]);
-
+		// create the decrypted array, and go through the
+		// encrypted sequence and decrypt each block of the
+		// message, this can be parallelized eventually
 		int[][] decrypted = new int[message.length][];
 		for(int i = 0; i< encrypted.length; i++) {
 			decrypted[i] = decrypt(encrypted[i],privateS, inverse,modulus);
 		}
-		System.out.println();
 
-		printDoubleArray(message);
-		printDoubleArray(decrypted);
-
-		System.out.println("First block decreypted:");
-		System.out.println(decrypted[0][0]);
-
+		// try to write the decrypted message to a file
 		try {
 			FileOutputStream fw = new FileOutputStream("output.txt");
 			for(int i = 0; i< decrypted.length; i++) {
@@ -70,18 +60,6 @@ public class knapsack {
 		} catch (Exception e) {
 			System.err.println(e.getMessage());
 		}
-
-
-		/*boolean[] array = new boolean[8];
-		array[0]=true;
-		array[1] = false;
-		array[2] = true;
-		array[3] = true;
-		array[4] = false;
-		array[5] = true;
-		array[6] = true;
-		array[7] = false;
-		System.out.println(toByte(array));*/
 
 	}
 
@@ -183,16 +161,6 @@ public class knapsack {
 			int x7 = (message[i] & sixtyfour)/64;
 			int x8 = (message[i] & onetwentyeight)/128;
 
-			System.out.println("bits in encrypted method:");
-			System.out.println(x1);
-			System.out.println(x2);
-			System.out.println(x3);
-			System.out.println(x4);
-			System.out.println(x5);
-			System.out.println(x6);
-			System.out.println(x7);
-			System.out.println(x8);
-
 
 			encryptedMessage = encryptedMessage.add(publicSequence[count--].multiply(
 				new BigInteger(Integer.toString(x1))));
@@ -211,16 +179,18 @@ public class knapsack {
 			encryptedMessage = encryptedMessage.add(publicSequence[count--].multiply(
 				new BigInteger(Integer.toString(x8))));
 		}
-		System.out.print("Encrypted block: ");
-		System.out.println(encryptedMessage);
 		return encryptedMessage;
 	}
 
 	/** Takes a sigle block of an encrypted message, and decrypts it,
 	*   by using the private sequence that is provided, to solve the
 	*   Knapsack problem of finding the original bits of the message.
-	*   This method retuns a byte array that will contain the original
-	*   message.
+	*   This method retuns a int array that will contain the original
+	*   message. This method does not return a byte[] becuase of sign
+	*   issues.  The fact that this method returns an int array means
+	*   that to write the decrypted message to a file, we cannot use
+	*   the write(byte[]) method of the FileOutputStream, but we have
+	*   to use the write(int b) method of the FileOutputStream.
 	*   @param message the BigInteger corresponding to the encrypted block
 	*   @param privateSequence The private sequence
 	*   @return a byte array containing the original message
@@ -238,7 +208,6 @@ public class knapsack {
 			while (message.compareTo(BigInteger.ZERO)>0) {
 				for(int i = 0; i< 8; i++) {
 					//System.out.println(position);
-					System.out.println("Comparing: "+message + " to "+privateSequence[position]);
 					if (message.compareTo(privateSequence[position])>=0) {
 						bits[i] = true;
 						message = message.subtract(privateSequence[position]);
@@ -247,17 +216,23 @@ public class knapsack {
 						bits[i] = false;
 						position--;
 					}
-					System.out.println(bits[i]);
 				}
 				int myByte = toByte(bits);
-				System.out.print("decrypt method ");
-				System.out.println(myByte);
 				decrypted[count++] = myByte;
 			}
 
 			return decrypted;
 	}
 
+	/** helper method that takes a boolean array and turns in into an
+	*   integer.  This is used by the decrypt method to turn binary
+	*   representations of messages into integers that can be written
+	*   into a file.
+	*   @param array the array to convert into an integer
+	*   @return the integer represented by the array
+	*   @throws IllegalArgumentException if the length of the boolean array
+	*   is not 8.
+	*/
 	public static int toByte(boolean[] array) throws IllegalArgumentException {
 		if (array.length==8) {
 			int[] bits = new int[8];
