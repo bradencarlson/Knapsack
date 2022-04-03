@@ -63,6 +63,42 @@ public class knapsack {
 
 	}
 
+	/** Make Modulus and Multiplier method.  Takes a private sequence,
+	*   which should be super increasing, and creates a modulus that is
+	*   as least twice as big as the last term of the sequence, and a
+	*   multiplier that is relatively prime to the modulus, and returns
+	*   these numbers as an array.
+	*   @param b The private sequence
+	*   @return A BigInteger array that contains the modulus and the
+	*   multiplier.
+	*/
+	public static BigInteger[] makeMnM(BigInteger[] b) {
+		BigInteger[] arr = new BigInteger[2];
+		Random rand = new Random();
+		BigInteger lastDoubled = (b[b.length-1]).multiply(BigInteger.valueOf(2));
+		BigInteger mult = new BigInteger(lastDoubled.bitLength()+99, rand);
+		arr[0] = mult;
+		boolean bool = false;
+		BigInteger big = b[b.length-1].subtract(b[0]);
+		int len = b[b.length-1].bitLength();
+		do {
+			BigInteger modulus = new BigInteger(len, rand);
+			if(modulus.compareTo(b[0])<0) {
+				modulus = modulus.add(b[0]);
+			}
+			if(modulus.compareTo(b[b.length-1]) >= 0 ) {
+				modulus = modulus.mod(big);
+			}
+			if(mult.gcd(modulus).equals(BigInteger.ONE)) {
+				arr[1] = modulus;
+				bool = true;
+			}
+		} while(!bool);
+
+		return arr;
+
+	}
+
 	/** This method takes in the name of a file, as well as a length.
 	*   This effectively splits up the message into blocks of bytes of
 	*   the length provided.  This length should not be the length of the
