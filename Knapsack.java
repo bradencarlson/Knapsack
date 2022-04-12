@@ -78,10 +78,7 @@ public class Knapsack {
 		BigInteger[] encrypted = new BigInteger[message.length];
 
 		// go through the message, and encrypt each block
-		// this can be parallelized eventually, possibly completed
-//		for(int i = 0; i< message.length; i++) {
-//			encrypted[i] = encrypt(message[i],publicS);
-//		}
+		// parallelized completed
 		//start of encryption threading
 		ExecutorService service1 = Executors.newFixedThreadPool(message.length);
 		List<Future> allFutures1 = new ArrayList<>();
@@ -119,11 +116,7 @@ public class Knapsack {
 
 		// create the decrypted array, and go through the
 		// encrypted sequence and decrypt each block of the
-		// message, this can be parallelized eventually, possibly completed
-//		int[][] decrypted = new int[message.length][];
-//		for(int i = 0; i< encrypted.length; i++) {
-//			decrypted[i] = decrypt(encrypted[i],privateS, inverse,modulus);
-//		}
+		// message, parallelized completed
 		//Start of decryption threading
 		int [][] decrypted = new int[message.length][];
 		ExecutorService service2 = Executors.newFixedThreadPool(encrypted.length);
@@ -327,11 +320,11 @@ public class Knapsack {
 		return encryptedMessage;
 	}
 
-	/** Takes a sigle block of an encrypted message, and decrypts it,
+	/** Takes a single block of an encrypted message, and decrypts it,
 	*   by using the private sequence that is provided, to solve the
 	*   Knapsack problem of finding the original bits of the message.
-	*   This method retuns a int array that will contain the original
-	*   message. This method does not return a byte[] becuase of sign
+	*   This method returns a int array that will contain the original
+	*   message. This method does not return a byte[] because of sign
 	*   issues.  The fact that this method returns an int array means
 	*   that to write the decrypted message to a file, we cannot use
 	*   the write(byte[]) method of the FileOutputStream, but we have
