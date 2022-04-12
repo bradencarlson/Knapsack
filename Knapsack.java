@@ -76,7 +76,7 @@ public class Knapsack {
 
 		// create the encrypted array
 		BigInteger[] encrypted = new BigInteger[message.length];
-
+    
 		// go through the message, and encrypt each block
 		// parallelized completed
 		//start of encryption threading
@@ -86,12 +86,10 @@ public class Knapsack {
 			Future<BigInteger> future = service1.submit(new EncryptThread(message[i], publicS));
 			allFutures1.add(future);
 		}
-		
-		boolean alive = true;
-		System.out.println("Encryption Started");
-		
-		//Makes sure all the threads get done before continuing, could possibly remove because of the .get() method that futures support
+    //Makes sure all the threads get done before continuing, could possibly remove because of the .get() method that futures support
 		//which might make the program wait until it has something to actually get. But alive is a good safety net. 
+		boolean alive = true;
+		System.out.println("Encryption Started")
 		while(alive){
 			alive = false;
 			for(int k = 0; k < allFutures1.size() && alive == false; k++) {
@@ -101,6 +99,7 @@ public class Knapsack {
 			}
 		}
 		System.out.println("Encryption Finished");
+    //Adds to the encrypted array
 		for(int i = 0; i<encrypted.length; i++) {
 			try {
 				encrypted[i] = (BigInteger) (allFutures1.get(i)).get();
@@ -125,7 +124,7 @@ public class Knapsack {
 			Future<int []> future = service2.submit(new DecryptThread(encrypted[i],privateS, inverse,modulus));
 			allFutures2.add(future);
 		}
-
+    //thread checker
 		alive = true;
 		System.out.println("Decryption Started");
 		while(alive){
@@ -137,9 +136,10 @@ public class Knapsack {
 			}
 		}
 		System.out.println("Decryption Finished");
+    //Adding to decrypted array
 		for(int i = 0; i<encrypted.length; i++) {
 			try {
-				decrypted[i] = (int[]) (allFutures2.get(i)).get();
+				decrypted[i] = (int[]) (allFutures.get(i)).get();
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
