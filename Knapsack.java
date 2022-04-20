@@ -1,3 +1,5 @@
+package workbench;
+
 import java.math.BigInteger;
 import java.util.Random;
 import java.util.concurrent.Callable;
@@ -113,7 +115,17 @@ public class Knapsack {
 			}
 		}
 		service1.shutdown();
-
+		
+		try {
+			FileOutputStream fw = new FileOutputStream("encrypted.txt");
+			for(int i = 0; i< encrypted.length; i++) {
+					fw.write(encrypted[i].intValue());
+			}
+			fw.close();
+		} catch (Exception e) {
+			System.err.println(e.getMessage());
+		}
+		
 		// create the decrypted array, and go through the
 		// encrypted sequence and decrypt each block of the
 		// message, parallelized completed
