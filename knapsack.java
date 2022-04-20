@@ -48,6 +48,16 @@ public class knapsack {
 			decrypted[i] = decrypt(encrypted[i],privateS, inverse,modulus);
 		}
 
+		try {
+			FileOutputStream fw = new FileOutputStream("encrypted.txt");
+			for(int i = 0; i<encrypted.length; i++) {
+				fw.write(encrypted[i].intValue());
+			}
+			fw.close();
+		} catch (Exception e) {
+			System.err.println(e.getMessage());
+		}
+
 		// try to write the decrypted message to a file
 		try {
 			FileOutputStream fw = new FileOutputStream("output.txt");
